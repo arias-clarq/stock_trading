@@ -3,6 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:stock_trading/details.dart';
 
+import 'model/StockTrading.dart';
+import 'service/StockDataService.dart';
+
 void main() {
   runApp(MaterialApp(
     debugShowCheckedModeBanner: false,
@@ -20,164 +23,106 @@ void main() {
   ));
 }
 
-class Search extends StatelessWidget {
+class Search extends StatefulWidget {
+  @override
+  State<Search> createState() => _SearchState();
+}
+
+class _SearchState extends State<Search> {
+  final _getCoinList = getCoinList();
+  List<CoinList> _coinList = [];
+  List<CoinList> _filteredList = [];
+
+  _fetchCoinList() async {
+    try {
+      _coinList = await _getCoinList.getList();
+      setState(() {
+        _filteredList = List.from(_coinList);
+      });
+    } catch (e) {
+      print(e);
+    }
+  }
+
+  void _filterCoins(String query) {
+    setState(() {
+      _filteredList = _coinList
+          .where((coin) => coin.name.toLowerCase().contains(query.toLowerCase()))
+          .toList();
+    });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _fetchCoinList();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Color(0xFF232924),
       appBar: AppBar(
         backgroundColor: Colors.transparent,
-        // Set the background color to transparent
         elevation: 0,
-        // Remove the shadow
         centerTitle: true,
-        // Center the title
         leading: IconButton(
           icon: Icon(Icons.chevron_left),
           color: Colors.white,
           onPressed: () {
-            // Add navigation logic here to go back
             Navigator.of(context).pop();
           },
         ),
         title: Text(
           'Select Stock:',
-          style: TextStyle(color: Colors.white), // Set the text color
+          style: TextStyle(color: Colors.white),
         ),
       ),
-      body: Expanded(
-        child: SingleChildScrollView(
-          child: Column(
-            children: [
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: TextField(
-                  decoration: InputDecoration(
-                    hintText: 'Search...',
-                    hintStyle: TextStyle(color: Colors.white),
-                    prefixIcon: Icon(Icons.search, color: Colors.white),
-                  ),
-                  style: TextStyle(color: Colors.white),
-                ),
+      body: Column(
+        children: [
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: TextField(
+              decoration: InputDecoration(
+                hintText: 'Search...',
+                hintStyle: TextStyle(color: Colors.white),
+                prefixIcon: Icon(Icons.search, color: Colors.white),
               ),
-              SizedBox(
-                height: 5,
-              ),
-
-              Container(
-                padding: EdgeInsets.symmetric(horizontal: 20),
-                child: Column(
-                  children: [
-                    // ITEM1
-                    GestureDetector(
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => Details()),
-                        );
-                      },
-                      child: Container(
-                        margin: EdgeInsets.symmetric(vertical: 10),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Text('USD'),
-                            Icon(
-                              Icons.chevron_right,
-                            )
-                          ],
-                        ),
-                      ),
-                    ),
-                    Divider(
-                      height: 1,
-                      color: Color(0xFF313B33),
-                    ),
-                    //   item2
-                    GestureDetector(
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => Details()),
-                        );
-                      },
-                      child: Container(
-                        margin: EdgeInsets.symmetric(vertical: 10),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Text('TSLA'),
-                            Icon(
-                              Icons.chevron_right,
-                            )
-                          ],
-                        ),
-                      ),
-                    ),
-                    Divider(
-                      height: 1,
-                      color: Color(0xFF313B33),
-                    ),
-                    //   item3
-                    GestureDetector(
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => Details()),
-                        );
-                      },
-                      child: Container(
-                        margin: EdgeInsets.symmetric(vertical: 10),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Text('AAPL'),
-                            Icon(
-                              Icons.chevron_right,
-                            )
-                          ],
-                        ),
-                      ),
-                    ),
-                    Divider(
-                      height: 1,
-                      color: Color(0xFF313B33),
-                    ),
-                    //   item4
-                    GestureDetector(
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => Details()),
-                        );
-                      },
-                      child: Container(
-                        margin: EdgeInsets.symmetric(vertical: 10),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Text('LLC'),
-                            Icon(
-                              Icons.chevron_right,
-                            )
-                          ],
-                        ),
-                      ),
-                    ),
-                    Divider(
-                      height: 1,
-                      color: Color(0xFF313B33),
-                    ),
-                  ],
-                ),
-              ),
-            ],
+              style: TextStyle(color: Colors.white),
+              onChanged: _filterCoins, // Call _filterCoins on text change
+            ),
           ),
-        ),
+          Expanded(
+            child: _filteredList.isEmpty
+                ? Center(child: Text('No results found'))
+                : ListView.builder(
+              itemCount: _filteredList.length > 20 ? 20 : _filteredList.length,
+              itemBuilder: (context, index) {
+                return GestureDetector(
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => Details(coinId: _filteredList[index].coin_id),
+                      ),
+                    );
+                  },
+                  child: Container(
+                    margin: EdgeInsets.symmetric(vertical: 10),
+                    padding: EdgeInsets.symmetric(horizontal: 20),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(_filteredList[index].name.toUpperCase()),
+                        Icon(Icons.chevron_right),
+                      ],
+                    ),
+                  ),
+                );
+              },
+            ),
+          ),
+        ],
       ),
     );
   }

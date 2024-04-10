@@ -2,8 +2,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:stock_trading/search.dart';
-import 'model/StockTrading.dart';
-import 'service/StockDataService.dart';
 
 void main() {
   runApp(MaterialApp(
@@ -28,26 +26,6 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp>  {
-  final _stockDataService = getCoinData("CG-y7TNBhEA4Mx3TUJkXzT6caQH");
-  StockData? _stockData;
-
-  _fetchCoin(String coinId) async{
-    try{
-      final coinData = await _stockDataService.getCoin(coinId);
-      setState(() {
-        _stockData = coinData;
-        print(_stockData?.name);
-      });
-    }catch(e){
-      print(e);
-    }
-  }
-  
-  @override
-  void initState() {
-    _fetchCoin('tether');
-    super.initState();
-  }
 
   @override
   Widget build(BuildContext context) {

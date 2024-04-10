@@ -1,33 +1,61 @@
-class StockData{
+class CoinData{
   List<Map<String, dynamic>> data = [];
 
   final String symbol;
   final String image;
   final String name;
   final double currentPrice;
-  final int total_volume;
-  final int? high_24;
-  final int? low_24;
+  final double price_change_24h;
+  final int? total_volume;
+  final double? high_24;
+  final double? low_24;
+  //add more field here if desired
 
-  StockData({
+  CoinData({
     required this.symbol,
     required this.image,
     required this.name,
+    required this.price_change_24h,
     required this.currentPrice,
     required this.total_volume,
     required this.high_24,
     required this.low_24
   });
 
-  factory StockData.fromJson(data){
-    return StockData(
+  factory CoinData.fromJson(data){
+    return CoinData(
         symbol: data[0]['symbol'],
         image: data[0]['image'],
         name: data[0]['name'],
+        price_change_24h: data[0]['price_change_24h'],
         currentPrice: data[0]['current_price'],
         total_volume: data[0]['total_volume'],
         high_24: data[0]['high_24'],
         low_24: data[0]['low_24']
     );
+  }
+}
+
+class CoinList {
+  final String coin_id;
+  final String name;
+  final String symbol;
+
+  CoinList({
+    required this.coin_id,
+    required this.name,
+    required this.symbol
+  });
+
+  factory CoinList.fromJson(Map<String, dynamic> json) {
+    return CoinList(
+        coin_id: json['id'],
+        name: json['name'],
+        symbol: json['symbol']
+    );
+  }
+
+  static List<CoinList> coinListFromJson(List<dynamic> jsonList) {
+    return jsonList.map((item) => CoinList.fromJson(item)).toList();
   }
 }

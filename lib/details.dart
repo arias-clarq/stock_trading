@@ -2,10 +2,13 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 
+import 'model/StockTrading.dart';
+import 'service/StockDataService.dart';
+import 'package:intl/intl.dart  ';
+
 void main() {
   runApp(MaterialApp(
     debugShowCheckedModeBanner: false,
-    home: Details(),
     theme: ThemeData(
       textTheme: TextTheme(
         bodyText1: TextStyle(color: Colors.white),
@@ -19,9 +22,48 @@ void main() {
   ));
 }
 
-class Details extends StatelessWidget {
-  final TextEditingController priceController =
-      TextEditingController(text: '190.00');
+class Details extends StatefulWidget {
+  final String coinId;
+
+  Details({required this.coinId});
+
+  @override
+  State<Details> createState() => _DetailsState();
+}
+
+class _DetailsState extends State<Details> {
+  final TextEditingController priceController = TextEditingController(text: '190.00');
+
+  final _stockDataService = getCoinData("CG-y7TNBhEA4Mx3TUJkXzT6caQH");
+  CoinData? _stockData;
+  double? previous_close;
+  String? previous_close_string;
+  String? current_price;
+
+  String formatDoubleWithCommas(double value) {
+    final formatter = NumberFormat('#,##0.00', 'en_US');
+    return formatter.format(value);
+  }
+
+  _fetchCoin(String coinId) async{
+    try{
+      final coinData = await _stockDataService.getCoin(coinId);
+      setState(() {
+        _stockData = coinData;
+        previous_close = _stockData!.currentPrice - _stockData!.price_change_24h;
+        previous_close_string = previous_close?.toStringAsFixed(2);
+        current_price = formatDoubleWithCommas(_stockData!.currentPrice);
+      });
+    }catch(e){
+      print(e);
+    }
+  }
+
+  @override
+  void initState() {
+    _fetchCoin(widget.coinId);
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -65,14 +107,14 @@ class Details extends StatelessWidget {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
-                                'AAPL',
+                                _stockData?.symbol.toUpperCase() ?? '',
                                 style: TextStyle(fontSize: 20),
                               ),
-                              Text('Apple Inc'),
+                              Text(_stockData?.name ?? ''),
                             ],
                           ),
                           Text(
-                            '168.54',
+                            '${previous_close_string ?? ''}',
                             style: TextStyle(fontSize: 20),
                           ),
                         ],
@@ -123,7 +165,7 @@ class Details extends StatelessWidget {
                                     style: TextStyle(color: Colors.black87),
                                   ),
                                   Text(
-                                    '168.54',
+                                    current_price ?? '',
                                     style: TextStyle(color: Colors.black54),
                                   ),
                                   SizedBox(
@@ -133,10 +175,18 @@ class Details extends StatelessWidget {
                                     'Quantity:',
                                     style: TextStyle(color: Colors.black87),
                                   ),
-                                  TextField(
+                                  TextFormField(
+                                    keyboardType: TextInputType.number,
+                                    style: TextStyle(color: Colors.green),
                                     decoration: InputDecoration(
                                       hintText: 'Enter quantity',
                                     ),
+                                    validator: (value) {
+                                      if (value == null || value.isEmpty) {
+                                        return 'Please enter a quantity';
+                                      }
+                                      return null;
+                                    },
                                   ),
                                   SizedBox(
                                     height: 20,
@@ -186,7 +236,7 @@ class Details extends StatelessWidget {
                                     style: TextStyle(color: Colors.black87),
                                   ),
                                   Text(
-                                    '168.54',
+                                    current_price ?? '',
                                     style: TextStyle(color: Colors.black54),
                                   ),
                                   SizedBox(
@@ -196,10 +246,18 @@ class Details extends StatelessWidget {
                                     'Quantity:',
                                     style: TextStyle(color: Colors.black87),
                                   ),
-                                  TextField(
+                                  TextFormField(
+                                    keyboardType: TextInputType.number,
+                                    style: TextStyle(color: Colors.red),
                                     decoration: InputDecoration(
                                       hintText: 'Enter quantity',
                                     ),
+                                    validator: (value) {
+                                      if (value == null || value.isEmpty) {
+                                        return 'Please enter a quantity';
+                                      }
+                                      return null;
+                                    },
                                   ),
                                   SizedBox(
                                     height: 20,
