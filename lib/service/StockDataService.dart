@@ -17,7 +17,7 @@ class getCoinData{
     if(response.statusCode == 200){
         return CoinData.fromJson(jsonDecode(response.body));
     }else{
-      throw Exception('Failed to load data');
+      throw Exception('Failed to load coin data');
     }
   }
 }
@@ -33,7 +33,23 @@ class getCoinList{
     if(response.statusCode == 200){
       return CoinList.coinListFromJson(jsonDecode(response.body));
     }else{
-      throw Exception('Failed to load data');
+      throw Exception('Failed to load CoinList data');
+    }
+  }
+}
+
+class getCoinOHLCService {
+  static const API_URL = "https://api.coingecko.com/api/v3/coins";
+  String days = '1';
+  String precision = '2';
+
+  Future<List<CoinOHLC>> getCoinOHLC(String coinId) async {
+    final response = await http.get(Uri.parse('$API_URL/$coinId/ohlc?vs_currency=php&days=$days&precision=$precision'));
+
+    if (response.statusCode == 200) {
+      return CoinOHLC.coinOHLCFromJson(jsonDecode(response.body));
+    } else {
+      throw Exception('Failed to load coin OHLC data');
     }
   }
 }

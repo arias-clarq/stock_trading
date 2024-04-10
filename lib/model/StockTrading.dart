@@ -1,3 +1,4 @@
+//this is for details for getting specific coins based on id
 class CoinData{
   List<Map<String, dynamic>> data = [];
 
@@ -36,6 +37,7 @@ class CoinData{
   }
 }
 
+//this for searchList
 class CoinList {
   final String coin_id;
   final String name;
@@ -57,5 +59,36 @@ class CoinList {
 
   static List<CoinList> coinListFromJson(List<dynamic> jsonList) {
     return jsonList.map((item) => CoinList.fromJson(item)).toList();
+  }
+}
+
+//this for chart
+class CoinOHLC {
+  int timestamp;
+  double open;
+  double high;
+  double low;
+  double close;
+
+  CoinOHLC({
+    required this.timestamp,
+    required this.open,
+    required this.high,
+    required this.low,
+    required this.close,
+  });
+
+  factory CoinOHLC.fromJson(List<dynamic> jsonList) {
+    return CoinOHLC(
+      timestamp: jsonList[0] as int,
+      open: (jsonList[1] as num).toDouble(),
+      high: (jsonList[2] as num).toDouble(),
+      low: (jsonList[3] as num).toDouble(),
+      close: (jsonList[4] as num).toDouble(),
+    );
+  }
+
+  static List<CoinOHLC> coinOHLCFromJson(List<dynamic> jsonList) {
+    return jsonList.map((item) => CoinOHLC.fromJson(item)).toList();
   }
 }

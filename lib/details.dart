@@ -5,6 +5,8 @@ import 'package:flutter/widgets.dart';
 import 'model/StockTrading.dart';
 import 'service/StockDataService.dart';
 import 'package:intl/intl.dart  ';
+import 'package:fl_chart/fl_chart.dart';
+import 'dart:ui';
 
 void main() {
   runApp(MaterialApp(
@@ -59,8 +61,24 @@ class _DetailsState extends State<Details> {
     }
   }
 
+  final _getCoinOHLCService = getCoinOHLCService();
+  List<CoinOHLC> _coinOHLCList = [];
+  _fetchCoinOHLC(String coin_id) async {
+    try {
+      final List<CoinOHLC> coinOHLC = await _getCoinOHLCService.getCoinOHLC(coin_id);
+      setState(() {
+        _coinOHLCList = coinOHLC;
+      });
+    } catch (e) {
+      print(e);
+      // Handle error
+    }
+  }
+
   @override
   void initState() {
+    // _fetchCoinOHLC(widget.coinId);
+    _fetchCoinOHLC(widget.coinId);
     _fetchCoin(widget.coinId);
     super.initState();
   }
@@ -122,9 +140,31 @@ class _DetailsState extends State<Details> {
                     ),
                     Container(
                       color: Colors.black54,
-                      height: 200,
-
-                      //   ------------ graph here ------------
+                      height: 300,
+                      child: _coinOHLCList.isEmpty
+                          ? Center(child: Text('No data available'))
+                          : LineChart(
+                        LineChartData(
+                          lineBarsData: [
+                            LineChartBarData(
+                              spots: _coinOHLCList.map((ohlc) {
+                                return FlSpot(_coinOHLCList.indexOf(ohlc).toDouble(), ohlc.close);
+                              }).toList(),
+                              isCurved: true,
+                              colors: [Colors.blue],
+                              barWidth: 2,
+                              isStrokeCapRound: true,
+                              belowBarData: BarAreaData(show: false),
+                            ),
+                          ],
+                          minY: _coinOHLCList.map((ohlc) => ohlc.low).reduce((a, b) => a < b ? a : b),
+                          maxY: _coinOHLCList.map((ohlc) => ohlc.high).reduce((a, b) => a > b ? a : b),
+                          titlesData: FlTitlesData(
+                            leftTitles: SideTitles(showTitles: true),
+                            bottomTitles: SideTitles(showTitles: true),
+                          ),
+                        ),
+                      ),
                     ),
                   ],
                 ),
