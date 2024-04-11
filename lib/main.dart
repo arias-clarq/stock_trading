@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:stock_trading/search.dart';
+import 'package:intl/intl.dart  ';
 
 void main() {
   runApp(MaterialApp(
@@ -20,7 +21,34 @@ void main() {
   ));
 }
 
-class MyApp extends StatelessWidget {
+class MyApp extends StatefulWidget {
+  @override
+  _MyAppState createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp>  {
+
+  double accountBalance = 10000.0; // Example account balance
+  double margin = 2.0; // Example margin factor (e.g., 2x leverage)
+  double marginRequirement = 0.5; // Example margin requirement (e.g., 50%)
+  late double buyingPower; // Declare buyingPower as a late variable
+  late String buyingPowerString;
+  late String accountBalanceString;
+
+  String formatDoubleWithCommas(double value) {
+    final formatter = NumberFormat('#,##0.00', 'en_US');
+    return formatter.format(value);
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    // Calculate buying power in initState
+    buyingPower = accountBalance * margin * (1.0 - marginRequirement);
+    buyingPowerString = formatDoubleWithCommas(buyingPower);
+    accountBalanceString = formatDoubleWithCommas(accountBalance);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -72,7 +100,7 @@ class MyApp extends StatelessWidget {
                                   Text(
                                     'Juan Dela Cruz',
                                     style:
-                                        TextStyle(fontWeight: FontWeight.bold),
+                                    TextStyle(fontWeight: FontWeight.bold),
                                   ),
                                 ],
                               ),
@@ -86,7 +114,7 @@ class MyApp extends StatelessWidget {
                                 Navigator.push(
                                   context,
                                   MaterialPageRoute(
-                                      builder: (context) => Search()),
+                                      builder: (context) => Search(buyingPower: buyingPower,)),
                                 );
                               },
                               child: Container(
@@ -130,7 +158,7 @@ class MyApp extends StatelessWidget {
                             'Current Balance',
                           ),
                           Text(
-                            '10,000.00',
+                            '$accountBalanceString',
                             style: TextStyle(fontSize: 30),
                           ),
                         ],
@@ -147,7 +175,7 @@ class MyApp extends StatelessWidget {
                               style: TextStyle(fontSize: 15),
                             ),
                             Text(
-                              '5,000.00',
+                              '$buyingPowerString',
                               style: TextStyle(fontSize: 20),
                             ),
                           ],
@@ -182,7 +210,7 @@ class MyApp extends StatelessWidget {
                               margin: EdgeInsets.only(bottom: 9, top: 15),
                               child: Row(
                                 mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
+                                MainAxisAlignment.spaceBetween,
                                 children: [
                                   Text(
                                     'Stock Assets',
@@ -215,7 +243,7 @@ class MyApp extends StatelessWidget {
                               padding: EdgeInsets.symmetric(horizontal: 15),
                               child: Row(
                                 mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
+                                MainAxisAlignment.spaceBetween,
                                 children: [
                                   Text('Name'),
                                   Text('Loss/Profit'),
@@ -227,11 +255,11 @@ class MyApp extends StatelessWidget {
                               margin: EdgeInsets.only(bottom: 9, top: 5),
                               child: Row(
                                 mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
+                                MainAxisAlignment.spaceBetween,
                                 children: [
                                   Column(
                                     crossAxisAlignment:
-                                        CrossAxisAlignment.start,
+                                    CrossAxisAlignment.start,
                                     children: [
                                       Text('TSLA'),
                                       Text(
@@ -244,7 +272,7 @@ class MyApp extends StatelessWidget {
                                   ),
                                   Column(
                                     crossAxisAlignment:
-                                        CrossAxisAlignment.center,
+                                    CrossAxisAlignment.center,
                                     children: [
                                       Text('-0.23'),
                                       Text(
@@ -263,11 +291,11 @@ class MyApp extends StatelessWidget {
                               margin: EdgeInsets.only(bottom: 9, top: 5),
                               child: Row(
                                 mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
+                                MainAxisAlignment.spaceBetween,
                                 children: [
                                   Column(
                                     crossAxisAlignment:
-                                        CrossAxisAlignment.start,
+                                    CrossAxisAlignment.start,
                                     children: [
                                       Text('TSLA'),
                                       Text(
@@ -280,7 +308,7 @@ class MyApp extends StatelessWidget {
                                   ),
                                   Column(
                                     crossAxisAlignment:
-                                        CrossAxisAlignment.center,
+                                    CrossAxisAlignment.center,
                                     children: [
                                       Text('-0.23'),
                                       Text(
@@ -299,11 +327,11 @@ class MyApp extends StatelessWidget {
                               margin: EdgeInsets.only(bottom: 9, top: 5),
                               child: Row(
                                 mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
+                                MainAxisAlignment.spaceBetween,
                                 children: [
                                   Column(
                                     crossAxisAlignment:
-                                        CrossAxisAlignment.start,
+                                    CrossAxisAlignment.start,
                                     children: [
                                       Text('TSLA'),
                                       Text(
@@ -316,7 +344,7 @@ class MyApp extends StatelessWidget {
                                   ),
                                   Column(
                                     crossAxisAlignment:
-                                        CrossAxisAlignment.center,
+                                    CrossAxisAlignment.center,
                                     children: [
                                       Text('-0.23'),
                                       Text(
@@ -335,11 +363,11 @@ class MyApp extends StatelessWidget {
                               margin: EdgeInsets.only(bottom: 9, top: 5),
                               child: Row(
                                 mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
+                                MainAxisAlignment.spaceBetween,
                                 children: [
                                   Column(
                                     crossAxisAlignment:
-                                        CrossAxisAlignment.start,
+                                    CrossAxisAlignment.start,
                                     children: [
                                       Text('TSLA'),
                                       Text(
@@ -352,7 +380,7 @@ class MyApp extends StatelessWidget {
                                   ),
                                   Column(
                                     crossAxisAlignment:
-                                        CrossAxisAlignment.center,
+                                    CrossAxisAlignment.center,
                                     children: [
                                       Text('-0.23'),
                                       Text(
@@ -371,11 +399,11 @@ class MyApp extends StatelessWidget {
                               margin: EdgeInsets.only(bottom: 9, top: 5),
                               child: Row(
                                 mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
+                                MainAxisAlignment.spaceBetween,
                                 children: [
                                   Column(
                                     crossAxisAlignment:
-                                        CrossAxisAlignment.start,
+                                    CrossAxisAlignment.start,
                                     children: [
                                       Text('LLC'),
                                       Text(
@@ -388,7 +416,7 @@ class MyApp extends StatelessWidget {
                                   ),
                                   Column(
                                     crossAxisAlignment:
-                                        CrossAxisAlignment.center,
+                                    CrossAxisAlignment.center,
                                     children: [
                                       Text('-0.23'),
                                       Text(
@@ -421,7 +449,7 @@ class MyApp extends StatelessWidget {
                               margin: EdgeInsets.only(bottom: 9),
                               child: Row(
                                 mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
+                                MainAxisAlignment.spaceBetween,
                                 children: [
                                   Text(
                                     'Transaction History',
@@ -516,4 +544,5 @@ class MyApp extends StatelessWidget {
       ),
     );
   }
+
 }

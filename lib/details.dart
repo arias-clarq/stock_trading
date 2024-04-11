@@ -2,10 +2,15 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 
+import 'model/StockTrading.dart';
+import 'service/StockDataService.dart';
+import 'package:intl/intl.dart  ';
+import 'package:fl_chart/fl_chart.dart';
+import 'dart:ui';
+
 void main() {
   runApp(MaterialApp(
     debugShowCheckedModeBanner: false,
-    home: Details(),
     theme: ThemeData(
       textTheme: TextTheme(
         bodyText1: TextStyle(color: Colors.white),
@@ -19,9 +24,84 @@ void main() {
   ));
 }
 
-class Details extends StatelessWidget {
-  final TextEditingController priceController =
-      TextEditingController(text: '190.00');
+class Details extends StatefulWidget {
+  final String coinId;
+  final double buyingPower;
+
+  Details({
+    required this.coinId,
+    required this.buyingPower
+  });
+
+  @override
+  State<Details> createState() => _DetailsState();
+}
+
+class _DetailsState extends State<Details> {
+  final TextEditingController priceController = TextEditingController(text: '190.00');
+
+  final _stockDataService = getCoinData("CG-y7TNBhEA4Mx3TUJkXzT6caQH");
+  CoinData? _stockData;
+  double? previous_close;
+  String? previous_close_string;
+  String? current_price;
+
+  String formatDoubleWithCommas(double value) {
+    final formatter = NumberFormat('#,##0.00', 'en_US');
+    return formatter.format(value);
+  }
+
+  _fetchCoin(String coinId) async{
+    try{
+      final coinData = await _stockDataService.getCoin(coinId);
+      setState(() {
+        _stockData = coinData;
+        previous_close = _stockData!.currentPrice - _stockData!.price_change_24h;
+        previous_close_string = previous_close?.toStringAsFixed(2);
+        current_price = formatDoubleWithCommas(_stockData!.currentPrice);
+      });
+    }catch(e){
+      print(e);
+    }
+  }
+
+  final _getCoinOHLCService = getCoinOHLCService();
+  List<CoinOHLC> _coinOHLCList = [];
+  _fetchCoinOHLC(String coin_id) async {
+    try {
+      final List<CoinOHLC> coinOHLC = await _getCoinOHLCService.getCoinOHLC(coin_id);
+      setState(() {
+        _coinOHLCList = coinOHLC;
+      });
+    } catch (e) {
+      print(e);
+      // Handle error
+    }
+  }
+
+  final TextEditingController quantityBuy = TextEditingController();
+  final TextEditingController quantitySell = TextEditingController();
+  // Add your logic to buy coins
+  void _buyCoins(String coinId, double price, int quantity) {
+      print(coinId);
+      print(quantity);
+      print(price);
+  }
+
+  // Add your logic to sell coins
+  void _sellCoins(String coinId, double price, int quantity) {
+      print(coinId);
+      print(quantity);
+      print(price);
+  }
+
+  @override
+  void initState() {
+    // _fetchCoinOHLC(widget.coinId);
+    _fetchCoinOHLC(widget.coinId);
+    _fetchCoin(widget.coinId);
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -65,14 +145,14 @@ class Details extends StatelessWidget {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
-                                'AAPL',
+                                _stockData?.symbol.toUpperCase() ?? '',
                                 style: TextStyle(fontSize: 20),
                               ),
-                              Text('Apple Inc'),
+                              Text(_stockData?.name ?? ''),
                             ],
                           ),
                           Text(
-                            '168.54',
+                            '${previous_close_string ?? ''}',
                             style: TextStyle(fontSize: 20),
                           ),
                         ],
@@ -80,9 +160,31 @@ class Details extends StatelessWidget {
                     ),
                     Container(
                       color: Colors.black54,
-                      height: 200,
-
-                      //   ------------ graph here ------------
+                      height: 300,
+                      child: _coinOHLCList.isEmpty
+                          ? Center(child: Text('No data available'))
+                          : LineChart(
+                        LineChartData(
+                          lineBarsData: [
+                            LineChartBarData(
+                              spots: _coinOHLCList.map((ohlc) {
+                                return FlSpot(_coinOHLCList.indexOf(ohlc).toDouble(), ohlc.close);
+                              }).toList(),
+                              isCurved: true,
+                              colors: [Colors.blue],
+                              barWidth: 2,
+                              isStrokeCapRound: true,
+                              belowBarData: BarAreaData(show: false),
+                            ),
+                          ],
+                          minY: _coinOHLCList.map((ohlc) => ohlc.low).reduce((a, b) => a < b ? a : b),
+                          maxY: _coinOHLCList.map((ohlc) => ohlc.high).reduce((a, b) => a > b ? a : b),
+                          titlesData: FlTitlesData(
+                            leftTitles: SideTitles(showTitles: true),
+                            bottomTitles: SideTitles(showTitles: true),
+                          ),
+                        ),
+                      ),
                     ),
                   ],
                 ),
@@ -109,7 +211,7 @@ class Details extends StatelessWidget {
                       Expanded(
                         child: TabBarView(
                           children: [
-                            // Content for Tab 1
+                            // Content for Buy Tab
                             Container(
                               padding: EdgeInsets.symmetric(horizontal: 20),
                               child: Column(
@@ -123,7 +225,7 @@ class Details extends StatelessWidget {
                                     style: TextStyle(color: Colors.black87),
                                   ),
                                   Text(
-                                    '168.54',
+                                    current_price ?? '',
                                     style: TextStyle(color: Colors.black54),
                                   ),
                                   SizedBox(
@@ -133,10 +235,19 @@ class Details extends StatelessWidget {
                                     'Quantity:',
                                     style: TextStyle(color: Colors.black87),
                                   ),
-                                  TextField(
+                                  TextFormField(
+                                    controller: quantityBuy,
+                                    keyboardType: TextInputType.number,
+                                    style: TextStyle(color: Colors.green),
                                     decoration: InputDecoration(
                                       hintText: 'Enter quantity',
                                     ),
+                                    validator: (value) {
+                                      if (value == null || value.isEmpty) {
+                                        return 'Please enter a quantity';
+                                      }
+                                      return null;
+                                    },
                                   ),
                                   SizedBox(
                                     height: 20,
@@ -146,7 +257,7 @@ class Details extends StatelessWidget {
                                     style: TextStyle(color: Colors.black87),
                                   ),
                                   Text(
-                                    '8,000,000.00',
+                                    '${widget.buyingPower}',
                                     style: TextStyle(color: Colors.black54),
                                   ),
 
@@ -158,10 +269,36 @@ class Details extends StatelessWidget {
                                     width: double.maxFinite,
                                     child: ElevatedButton(
                                       onPressed: () {
-                                        // Add your button onPressed logic here
+                                        int quantity = int.tryParse(quantityBuy.text) ?? 0;
+                                        double price = _stockData?.currentPrice ?? 0;
+                                        String coinId = widget.coinId;
+                                        showDialog(
+                                          context: context,
+                                          builder: (BuildContext context) {
+                                            return AlertDialog(
+                                              title: Text('Confirm Buy'),
+                                              content: Text('Are you sure you want to buy $quantity ${_stockData?.symbol.toUpperCase() ?? ''}?',style: TextStyle(color: Colors.black),),
+                                              actions: <Widget>[
+                                                TextButton(
+                                                  onPressed: () {
+                                                    _buyCoins(coinId, price, quantity);
+                                                    Navigator.of(context).pop();
+                                                  },
+                                                  child: Text('Buy'),
+                                                ),
+                                                TextButton(
+                                                  onPressed: () {
+                                                    Navigator.of(context).pop();
+                                                  },
+                                                  child: Text('Cancel'),
+                                                ),
+                                              ],
+                                            );
+                                          },
+                                        );
                                       },
                                       style: ElevatedButton.styleFrom(
-                                        backgroundColor: Colors.green, // Button background color
+                                        backgroundColor: Colors.green,
                                       ),
                                       child: Text(
                                         'Buy',
@@ -172,7 +309,7 @@ class Details extends StatelessWidget {
                                 ],
                               ),
                             ),
-                            // Content for Tab 2
+                            // Content for Sell Tab
                             Container(
                               padding: EdgeInsets.symmetric(horizontal: 20),
                               child: Column(
@@ -186,7 +323,7 @@ class Details extends StatelessWidget {
                                     style: TextStyle(color: Colors.black87),
                                   ),
                                   Text(
-                                    '168.54',
+                                    current_price ?? '',
                                     style: TextStyle(color: Colors.black54),
                                   ),
                                   SizedBox(
@@ -196,10 +333,19 @@ class Details extends StatelessWidget {
                                     'Quantity:',
                                     style: TextStyle(color: Colors.black87),
                                   ),
-                                  TextField(
+                                  TextFormField(
+                                    controller: quantitySell,
+                                    keyboardType: TextInputType.number,
+                                    style: TextStyle(color: Colors.red),
                                     decoration: InputDecoration(
                                       hintText: 'Enter quantity',
                                     ),
+                                    validator: (value) {
+                                      if (value == null || value.isEmpty) {
+                                        return 'Please enter a quantity';
+                                      }
+                                      return null;
+                                    },
                                   ),
                                   SizedBox(
                                     height: 20,
@@ -221,10 +367,37 @@ class Details extends StatelessWidget {
                                     width: double.maxFinite,
                                     child: ElevatedButton(
                                       onPressed: () {
-                                        // Add your button onPressed logic here
+                                        int quantity = int.tryParse(quantitySell.text) ?? 0;
+                                        double price = _stockData?.currentPrice ?? 0;
+                                        String coinId = widget.coinId;
+
+                                        showDialog(
+                                          context: context,
+                                          builder: (BuildContext context) {
+                                            return AlertDialog(
+                                              title: Text('Confirm Sell'),
+                                              content: Text('Are you sure you want to sell $quantity ${_stockData?.symbol.toUpperCase() ?? ''}?',style: TextStyle(color: Colors.black),),
+                                              actions: <Widget>[
+                                                TextButton(
+                                                  onPressed: () {
+                                                    _sellCoins(coinId,price,quantity);
+                                                    Navigator.of(context).pop();
+                                                  },
+                                                  child: Text('Sell'),
+                                                ),
+                                                TextButton(
+                                                  onPressed: () {
+                                                    Navigator.of(context).pop();
+                                                  },
+                                                  child: Text('Cancel'),
+                                                ),
+                                              ],
+                                            );
+                                          },
+                                        );
                                       },
                                       style: ElevatedButton.styleFrom(
-                                        backgroundColor: Colors.red, // Button background color
+                                        backgroundColor: Colors.red,
                                       ),
                                       child: Text(
                                         'Sell',
