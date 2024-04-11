@@ -26,8 +26,12 @@ void main() {
 
 class Details extends StatefulWidget {
   final String coinId;
+  final double buyingPower;
 
-  Details({required this.coinId});
+  Details({
+    required this.coinId,
+    required this.buyingPower
+  });
 
   @override
   State<Details> createState() => _DetailsState();
@@ -73,6 +77,22 @@ class _DetailsState extends State<Details> {
       print(e);
       // Handle error
     }
+  }
+
+  final TextEditingController quantityBuy = TextEditingController();
+  final TextEditingController quantitySell = TextEditingController();
+  // Add your logic to buy coins
+  void _buyCoins(String coinId, double price, int quantity) {
+      print(coinId);
+      print(quantity);
+      print(price);
+  }
+
+  // Add your logic to sell coins
+  void _sellCoins(String coinId, double price, int quantity) {
+      print(coinId);
+      print(quantity);
+      print(price);
   }
 
   @override
@@ -191,7 +211,7 @@ class _DetailsState extends State<Details> {
                       Expanded(
                         child: TabBarView(
                           children: [
-                            // Content for Tab 1
+                            // Content for Buy Tab
                             Container(
                               padding: EdgeInsets.symmetric(horizontal: 20),
                               child: Column(
@@ -216,6 +236,7 @@ class _DetailsState extends State<Details> {
                                     style: TextStyle(color: Colors.black87),
                                   ),
                                   TextFormField(
+                                    controller: quantityBuy,
                                     keyboardType: TextInputType.number,
                                     style: TextStyle(color: Colors.green),
                                     decoration: InputDecoration(
@@ -236,7 +257,7 @@ class _DetailsState extends State<Details> {
                                     style: TextStyle(color: Colors.black87),
                                   ),
                                   Text(
-                                    '8,000,000.00',
+                                    '${widget.buyingPower}',
                                     style: TextStyle(color: Colors.black54),
                                   ),
 
@@ -248,10 +269,36 @@ class _DetailsState extends State<Details> {
                                     width: double.maxFinite,
                                     child: ElevatedButton(
                                       onPressed: () {
-                                        // Add your button onPressed logic here
+                                        int quantity = int.tryParse(quantityBuy.text) ?? 0;
+                                        double price = _stockData?.currentPrice ?? 0;
+                                        String coinId = widget.coinId;
+                                        showDialog(
+                                          context: context,
+                                          builder: (BuildContext context) {
+                                            return AlertDialog(
+                                              title: Text('Confirm Buy'),
+                                              content: Text('Are you sure you want to buy $quantity ${_stockData?.symbol.toUpperCase() ?? ''}?',style: TextStyle(color: Colors.black),),
+                                              actions: <Widget>[
+                                                TextButton(
+                                                  onPressed: () {
+                                                    _buyCoins(coinId, price, quantity);
+                                                    Navigator.of(context).pop();
+                                                  },
+                                                  child: Text('Buy'),
+                                                ),
+                                                TextButton(
+                                                  onPressed: () {
+                                                    Navigator.of(context).pop();
+                                                  },
+                                                  child: Text('Cancel'),
+                                                ),
+                                              ],
+                                            );
+                                          },
+                                        );
                                       },
                                       style: ElevatedButton.styleFrom(
-                                        backgroundColor: Colors.green, // Button background color
+                                        backgroundColor: Colors.green,
                                       ),
                                       child: Text(
                                         'Buy',
@@ -262,7 +309,7 @@ class _DetailsState extends State<Details> {
                                 ],
                               ),
                             ),
-                            // Content for Tab 2
+                            // Content for Sell Tab
                             Container(
                               padding: EdgeInsets.symmetric(horizontal: 20),
                               child: Column(
@@ -287,6 +334,7 @@ class _DetailsState extends State<Details> {
                                     style: TextStyle(color: Colors.black87),
                                   ),
                                   TextFormField(
+                                    controller: quantitySell,
                                     keyboardType: TextInputType.number,
                                     style: TextStyle(color: Colors.red),
                                     decoration: InputDecoration(
@@ -319,10 +367,37 @@ class _DetailsState extends State<Details> {
                                     width: double.maxFinite,
                                     child: ElevatedButton(
                                       onPressed: () {
-                                        // Add your button onPressed logic here
+                                        int quantity = int.tryParse(quantitySell.text) ?? 0;
+                                        double price = _stockData?.currentPrice ?? 0;
+                                        String coinId = widget.coinId;
+
+                                        showDialog(
+                                          context: context,
+                                          builder: (BuildContext context) {
+                                            return AlertDialog(
+                                              title: Text('Confirm Sell'),
+                                              content: Text('Are you sure you want to sell $quantity ${_stockData?.symbol.toUpperCase() ?? ''}?',style: TextStyle(color: Colors.black),),
+                                              actions: <Widget>[
+                                                TextButton(
+                                                  onPressed: () {
+                                                    _sellCoins(coinId,price,quantity);
+                                                    Navigator.of(context).pop();
+                                                  },
+                                                  child: Text('Sell'),
+                                                ),
+                                                TextButton(
+                                                  onPressed: () {
+                                                    Navigator.of(context).pop();
+                                                  },
+                                                  child: Text('Cancel'),
+                                                ),
+                                              ],
+                                            );
+                                          },
+                                        );
                                       },
                                       style: ElevatedButton.styleFrom(
-                                        backgroundColor: Colors.red, // Button background color
+                                        backgroundColor: Colors.red,
                                       ),
                                       child: Text(
                                         'Sell',

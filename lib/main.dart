@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:stock_trading/search.dart';
+import 'package:intl/intl.dart  ';
 
 void main() {
   runApp(MaterialApp(
@@ -26,6 +27,27 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp>  {
+
+  double accountBalance = 10000.0; // Example account balance
+  double margin = 2.0; // Example margin factor (e.g., 2x leverage)
+  double marginRequirement = 0.5; // Example margin requirement (e.g., 50%)
+  late double buyingPower; // Declare buyingPower as a late variable
+  late String buyingPowerString;
+  late String accountBalanceString;
+
+  String formatDoubleWithCommas(double value) {
+    final formatter = NumberFormat('#,##0.00', 'en_US');
+    return formatter.format(value);
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    // Calculate buying power in initState
+    buyingPower = accountBalance * margin * (1.0 - marginRequirement);
+    buyingPowerString = formatDoubleWithCommas(buyingPower);
+    accountBalanceString = formatDoubleWithCommas(accountBalance);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -92,7 +114,7 @@ class _MyAppState extends State<MyApp>  {
                                 Navigator.push(
                                   context,
                                   MaterialPageRoute(
-                                      builder: (context) => Search()),
+                                      builder: (context) => Search(buyingPower: buyingPower,)),
                                 );
                               },
                               child: Container(
@@ -136,7 +158,7 @@ class _MyAppState extends State<MyApp>  {
                             'Current Balance',
                           ),
                           Text(
-                            '10,000.00',
+                            '$accountBalanceString',
                             style: TextStyle(fontSize: 30),
                           ),
                         ],
@@ -153,7 +175,7 @@ class _MyAppState extends State<MyApp>  {
                               style: TextStyle(fontSize: 15),
                             ),
                             Text(
-                              '5,000.00',
+                              '$buyingPowerString',
                               style: TextStyle(fontSize: 20),
                             ),
                           ],

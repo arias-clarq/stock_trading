@@ -9,7 +9,6 @@ import 'service/StockDataService.dart';
 void main() {
   runApp(MaterialApp(
     debugShowCheckedModeBanner: false,
-    home: Search(),
     theme: ThemeData(
       textTheme: TextTheme(
         bodyText1: TextStyle(color: Colors.white),
@@ -24,6 +23,9 @@ void main() {
 }
 
 class Search extends StatefulWidget {
+  final double buyingPower;
+  Search({required this.buyingPower});
+
   @override
   State<Search> createState() => _SearchState();
 }
@@ -103,7 +105,7 @@ class _SearchState extends State<Search> {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => Details(coinId: _filteredList[index].coin_id),
+                        builder: (context) => Details(coinId: _filteredList[index].coin_id, buyingPower: widget.buyingPower,),
                       ),
                     );
                   },
