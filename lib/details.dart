@@ -26,7 +26,7 @@ void main() {
 
 class Details extends StatefulWidget {
   final String coinId;
-  final double buyingPower;
+  double buyingPower;
 
   Details({
     required this.coinId,
@@ -83,17 +83,60 @@ class _DetailsState extends State<Details> {
   final TextEditingController quantitySell = TextEditingController();
   // Add your logic to buy coins
   void _buyCoins(String coinId, double price, int quantity) {
-      print(coinId);
-      print(quantity);
-      print(price);
+    // Calculate the total cost of buying the specified quantity of the coin
+    double totalCost = price * quantity;
+
+    // Check if the buying power is sufficient
+    if (widget.buyingPower >= totalCost) {
+      // Perform the purchase
+      print('Buying $quantity coins of $coinId at $price per coin');
+
+      // Subtract the total cost from buying power
+      setState(() {
+        widget.buyingPower -= totalCost;
+        // Update user portfolio (e.g., adding the purchased coins)
+        // This can be done using a portfolio service or updating the state
+        // Example:
+        // updateUserPortfolio(coinId, quantity, price);
+      });
+
+      // Display a success message
+      ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Successfully bought $quantity $coinId.'))
+      );
+
+    } else {
+      // Not enough buying power
+      print('Insufficient buying power');
+      // Display an error message
+      ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Insufficient buying power to buy $quantity $coinId.'))
+      );
+    }
   }
 
-  // Add your logic to sell coins
   void _sellCoins(String coinId, double price, int quantity) {
-      print(coinId);
-      print(quantity);
-      print(price);
+    // Calculate the total revenue from selling the specified quantity of the coin
+    double totalRevenue = price * quantity;
+
+    // Perform the sale
+    print('Selling $quantity coins of $coinId at $price per coin');
+
+    // Add the total revenue to buying power
+    setState(() {
+      widget.buyingPower += totalRevenue;
+      // Update user portfolio (e.g., removing the sold coins)
+      // This can be done using a portfolio service or updating the state
+      // Example:
+      // updateUserPortfolioAfterSale(coinId, quantity);
+    });
+
+    // Display a success message
+    ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Successfully sold $quantity $coinId.'))
+    );
   }
+
 
   @override
   void initState() {
@@ -347,16 +390,16 @@ class _DetailsState extends State<Details> {
                                       return null;
                                     },
                                   ),
-                                  SizedBox(
-                                    height: 20,
-                                  ),
-                                  Text(
-                                    'Max:',
-                                    style: TextStyle(color: Colors.black87),
-                                  ),
-                                  Text(
-                                    '3.00',
-                                    style: TextStyle(color: Colors.black54),
+                                  Row(
+                                    children: [
+                                      Text('Max:', style: TextStyle(color: Colors.black87)),
+                                      SizedBox(width: 10), // Adjust the width as needed
+                                      Text('3.00', style: TextStyle(color: Colors.black54)),
+                                      SizedBox(width: 20), // Adjust the width as needed
+                                      Text('Buying Power:', style: TextStyle(color: Colors.black87)),
+                                      SizedBox(width: 10), // Adjust the width as needed
+                                      Text('${widget.buyingPower}', style: TextStyle(color: Colors.black54)),
+                                    ],
                                   ),
 
                                   SizedBox(
