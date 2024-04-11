@@ -42,12 +42,13 @@ class Details extends StatefulWidget {
 
 class _DetailsState extends State<Details> {
   final TextEditingController priceController = TextEditingController(text: '190.00');
-
+  String totalBuy = '0.00';
   final _stockDataService = getCoinData("CG-y7TNBhEA4Mx3TUJkXzT6caQH");
   CoinData? _stockData;
   double? previous_close;
   String? previous_close_string;
   String? current_price;
+
 
   String formatDoubleWithCommas(double value) {
     final formatter = NumberFormat('#,##0.00', 'en_US');
@@ -212,7 +213,7 @@ class _DetailsState extends State<Details> {
                             ],
                           ),
                           Text(
-                            '\$${current_price ?? ''}',
+                            '₱ ${current_price ?? ''}',
                             style: TextStyle(fontSize: 20),
                           ),
                         ],
@@ -232,15 +233,25 @@ class _DetailsState extends State<Details> {
                                 return FlSpot(_coinOHLCList.indexOf(ohlc).toDouble(), ohlc.close);
                               }).toList(),
                               isCurved: true,
+                              curveSmoothness: 0.40,
                               colors: [Colors.blue],
                               barWidth: 2,
                               isStrokeCapRound: true,
-                              belowBarData: BarAreaData(show: false),
+                              dotData: FlDotData(show: false), // Remove dots
+                              belowBarData: BarAreaData(
+                                show: true,
+                                gradientFrom: Offset(0, 0),
+                                gradientTo: Offset(0, 2),
+                                colors: [Colors.blue.withOpacity(0.5), Colors.transparent], // Add gradient
+                              ),
+
                             ),
+
                           ],
                           minY: _coinOHLCList.map((ohlc) => ohlc.low).reduce((a, b) => a < b ? a : b),
                           maxY: _coinOHLCList.map((ohlc) => ohlc.high).reduce((a, b) => a > b ? a : b),
                           titlesData: FlTitlesData(
+
                             leftTitles: SideTitles(
                               showTitles: true,
                               getTextStyles: (value) => TextStyle(
@@ -257,9 +268,12 @@ class _DetailsState extends State<Details> {
                                   fontSize: 7,
                               ),
                             ),
+
                           ),
 
                         ),
+                        swapAnimationDuration: Duration(milliseconds: 150),
+                        swapAnimationCurve: Curves.linear,
                       ),
                     ),
                   ],
@@ -301,7 +315,7 @@ class _DetailsState extends State<Details> {
                                     style: TextStyle(color: Colors.black87),
                                   ),
                                   Text(
-                                    '\$' + (current_price ?? ''),
+                                    '₱' + (current_price ?? ''),
                                     style: TextStyle(color: Colors.black54),
                                   ),
                                   SizedBox(
@@ -324,6 +338,26 @@ class _DetailsState extends State<Details> {
                                       }
                                       return null;
                                     },
+                                    onChanged: (value) {
+                                      // Calculate totalBuy when quantity is changed
+                                      int quantity = int.tryParse(value) ?? 0;
+                                      double price = double.tryParse(current_price ?? '0.00') ?? 0.00;
+                                      double total = price * quantity;
+                                      setState(() {
+                                        totalBuy = total.toStringAsFixed(2);
+                                      });
+                                    },
+                                  ),
+                                  SizedBox(
+                                    height: 20,
+                                  ),
+                                  Text(
+                                    'Total:',
+                                    style: TextStyle(color: Colors.black87),
+                                  ),
+                                  Text(
+                                    '₱ $totalBuy' , //current price * qty
+                                    style: TextStyle(color: Colors.black54),
                                   ),
                                   SizedBox(
                                     height: 20,
@@ -333,7 +367,7 @@ class _DetailsState extends State<Details> {
                                     style: TextStyle(color: Colors.black87),
                                   ),
                                   Text(
-                                    '\$${widget.buyingPower}',
+                                    '₱ ${widget.buyingPower}',
                                     style: TextStyle(color: Colors.black54),
                                   ),
 
@@ -399,7 +433,7 @@ class _DetailsState extends State<Details> {
                                     style: TextStyle(color: Colors.black87),
                                   ),
                                   Text(
-                                    '\$' + (current_price ?? ''),
+                                    '₱' + (current_price ?? ''),
                                     style: TextStyle(color: Colors.black54),
                                   ),
                                   SizedBox(
@@ -422,6 +456,17 @@ class _DetailsState extends State<Details> {
                                       }
                                       return null;
                                     },
+                                  ),
+                                  SizedBox(
+                                    height: 20,
+                                  ),
+                                  Text(
+                                    'Total:',
+                                    style: TextStyle(color: Colors.black87),
+                                  ),
+                                  Text(
+                                    '₱ ' ,
+                                    style: TextStyle(color: Colors.black54),
                                   ),
                                   SizedBox(
                                     height: 20,

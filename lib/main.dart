@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:stock_trading/search.dart';
 import 'package:intl/intl.dart  ';
+import 'package:fl_chart/fl_chart.dart';
 
 void main() {
   runApp(MaterialApp(
@@ -11,7 +12,7 @@ void main() {
       textTheme: TextTheme(
         bodyText1: TextStyle(color: Colors.white),
         bodyText2: TextStyle(color: Colors.white),
-        // Add more text styles if needed
+
       ),
       iconTheme: IconThemeData(
         color: Colors.white,
@@ -30,6 +31,7 @@ class MyApp extends StatefulWidget {
 
 class _MyAppState extends State<MyApp>  {
   late double accountBalance;
+
   double margin = 2.0; // Example margin factor (e.g., 2x leverage)
   double marginRequirement = 0.5; // Example margin requirement (e.g., 50%)
   late double buyingPower; // Declare buyingPower as a late variable
@@ -170,7 +172,7 @@ class _MyAppState extends State<MyApp>  {
                             'Current Balance',
                           ),
                           Text(
-                            '\$'+'$accountBalanceString',
+                            '₱'+'$accountBalanceString',
                             style: TextStyle(fontSize: 30),
                           ),
                         ],
@@ -187,7 +189,7 @@ class _MyAppState extends State<MyApp>  {
                               style: TextStyle(fontSize: 15),
                             ),
                             Text(
-                              '\$'+'$buyingPowerString',
+                              '₱'+'$buyingPowerString',
                               style: TextStyle(fontSize: 20),
                             ),
                           ],
@@ -200,7 +202,7 @@ class _MyAppState extends State<MyApp>  {
                               style: TextStyle(fontSize: 15),
                             ),
                             Text(
-                              '\$'+'124.80',
+                              '₱'+'124.80',
                               style: TextStyle(fontSize: 20),
                             ),
                           ],
@@ -263,20 +265,16 @@ class _MyAppState extends State<MyApp>  {
                             Container(
                               padding: EdgeInsets.symmetric(horizontal: 15),
                               child: Row(
-                                mainAxisAlignment:
-                                MainAxisAlignment.spaceBetween,
                                 children: [
                                   Text('Name'),
-                                  Text('Loss/Profit'),
-                                ],
+                                   ],
                               ),
                             ), //Stock assets header
                             Container(
                               padding: EdgeInsets.symmetric(horizontal: 15),
                               margin: EdgeInsets.only(bottom: 9, top: 5),
                               child: Row(
-                                mainAxisAlignment:
-                                MainAxisAlignment.spaceBetween,
+
                                 children: [
                                   Column(
                                     crossAxisAlignment:
@@ -291,166 +289,11 @@ class _MyAppState extends State<MyApp>  {
                                       ),
                                     ],
                                   ),
-                                  Column(
-                                    crossAxisAlignment:
-                                    CrossAxisAlignment.center,
-                                    children: [
-                                      Text('-0.23'),
-                                      Text(
-                                        '-0.1%',
-                                        style: TextStyle(
-                                            fontSize: 10,
-                                            color: Colors.white24),
-                                      ),
-                                    ],
-                                  ),
+
                                 ],
                               ),
                             ), //stock item
-                            Container(
-                              padding: EdgeInsets.symmetric(horizontal: 15),
-                              margin: EdgeInsets.only(bottom: 9, top: 5),
-                              child: Row(
-                                mainAxisAlignment:
-                                MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Column(
-                                    crossAxisAlignment:
-                                    CrossAxisAlignment.start,
-                                    children: [
-                                      Text('TSLA'),
-                                      Text(
-                                        '10 Shares',
-                                        style: TextStyle(
-                                            fontSize: 10,
-                                            color: Colors.white24),
-                                      ),
-                                    ],
-                                  ),
-                                  Column(
-                                    crossAxisAlignment:
-                                    CrossAxisAlignment.center,
-                                    children: [
-                                      Text('-0.23'),
-                                      Text(
-                                        '-0.1%',
-                                        style: TextStyle(
-                                            fontSize: 10,
-                                            color: Colors.white24),
-                                      ),
-                                    ],
-                                  ),
-                                ],
-                              ),
-                            ), //stock item
-                            Container(
-                              padding: EdgeInsets.symmetric(horizontal: 15),
-                              margin: EdgeInsets.only(bottom: 9, top: 5),
-                              child: Row(
-                                mainAxisAlignment:
-                                MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Column(
-                                    crossAxisAlignment:
-                                    CrossAxisAlignment.start,
-                                    children: [
-                                      Text('TSLA'),
-                                      Text(
-                                        '10 Shares',
-                                        style: TextStyle(
-                                            fontSize: 10,
-                                            color: Colors.white24),
-                                      ),
-                                    ],
-                                  ),
-                                  Column(
-                                    crossAxisAlignment:
-                                    CrossAxisAlignment.center,
-                                    children: [
-                                      Text('-0.23'),
-                                      Text(
-                                        '-0.1%',
-                                        style: TextStyle(
-                                            fontSize: 10,
-                                            color: Colors.white24),
-                                      ),
-                                    ],
-                                  ),
-                                ],
-                              ),
-                            ), //stock item
-                            Container(
-                              padding: EdgeInsets.symmetric(horizontal: 15),
-                              margin: EdgeInsets.only(bottom: 9, top: 5),
-                              child: Row(
-                                mainAxisAlignment:
-                                MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Column(
-                                    crossAxisAlignment:
-                                    CrossAxisAlignment.start,
-                                    children: [
-                                      Text('TSLA'),
-                                      Text(
-                                        '10 Shares',
-                                        style: TextStyle(
-                                            fontSize: 10,
-                                            color: Colors.white24),
-                                      ),
-                                    ],
-                                  ),
-                                  Column(
-                                    crossAxisAlignment:
-                                    CrossAxisAlignment.center,
-                                    children: [
-                                      Text('-0.23'),
-                                      Text(
-                                        '-0.1%',
-                                        style: TextStyle(
-                                            fontSize: 10,
-                                            color: Colors.white24),
-                                      ),
-                                    ],
-                                  ),
-                                ],
-                              ),
-                            ), //stock item
-                            Container(
-                              padding: EdgeInsets.symmetric(horizontal: 15),
-                              margin: EdgeInsets.only(bottom: 9, top: 5),
-                              child: Row(
-                                mainAxisAlignment:
-                                MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Column(
-                                    crossAxisAlignment:
-                                    CrossAxisAlignment.start,
-                                    children: [
-                                      Text('LLC'),
-                                      Text(
-                                        '10 Shares',
-                                        style: TextStyle(
-                                            fontSize: 10,
-                                            color: Colors.white24),
-                                      ),
-                                    ],
-                                  ),
-                                  Column(
-                                    crossAxisAlignment:
-                                    CrossAxisAlignment.center,
-                                    children: [
-                                      Text('-0.23'),
-                                      Text(
-                                        '-0.1%',
-                                        style: TextStyle(
-                                            fontSize: 10,
-                                            color: Colors.white24),
-                                      ),
-                                    ],
-                                  ),
-                                ],
-                              ),
-                            ), //stock item
+
                           ],
                         ),
                       ),
