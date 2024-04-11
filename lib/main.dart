@@ -158,7 +158,7 @@ class _MyAppState extends State<MyApp>  {
                             'Current Balance',
                           ),
                           Text(
-                            '$accountBalanceString',
+                            '\$'+'$accountBalanceString',
                             style: TextStyle(fontSize: 30),
                           ),
                         ],
@@ -175,7 +175,7 @@ class _MyAppState extends State<MyApp>  {
                               style: TextStyle(fontSize: 15),
                             ),
                             Text(
-                              '$buyingPowerString',
+                              '\$'+'$buyingPowerString',
                               style: TextStyle(fontSize: 20),
                             ),
                           ],
@@ -188,7 +188,7 @@ class _MyAppState extends State<MyApp>  {
                               style: TextStyle(fontSize: 15),
                             ),
                             Text(
-                              '124.80',
+                              '\$'+'124.80',
                               style: TextStyle(fontSize: 20),
                             ),
                           ],
@@ -219,18 +219,27 @@ class _MyAppState extends State<MyApp>  {
                                   ),
                                   Column(
                                     children: [
-                                      Container(
-                                        height: 30,
-                                        width: 30,
-                                        margin: EdgeInsets.only(right: 7),
-                                        decoration: BoxDecoration(
-                                          shape: BoxShape.circle,
-                                          color: Color(0xFF313B33),
-                                        ),
-                                        child: Center(
-                                          child: Icon(
-                                            Icons.add,
-                                            color: Colors.white,
+                                      GestureDetector(
+                                        onTap: () {
+                                          Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                                builder: (context) => Search(buyingPower: buyingPower,)),
+                                          );
+                                        },
+                                        child: Container(
+                                          height: 30,
+                                          width: 30,
+                                          margin: EdgeInsets.only(right: 7),
+                                          decoration: BoxDecoration(
+                                            shape: BoxShape.circle,
+                                            color: Color(0xFF313B33),
+                                          ),
+                                          child: Center(
+                                            child: Icon(
+                                              Icons.add,
+                                              color: Colors.white,
+                                            ),
                                           ),
                                         ),
                                       ),

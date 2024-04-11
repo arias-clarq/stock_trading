@@ -195,14 +195,15 @@ class _DetailsState extends State<Details> {
                             ],
                           ),
                           Text(
-                            '${previous_close_string ?? ''}',
+                            '\$${current_price ?? ''}',
                             style: TextStyle(fontSize: 20),
                           ),
                         ],
                       ),
                     ),
                     Container(
-                      color: Colors.black54,
+                      color: Colors.white,
+                      padding: EdgeInsets.all(15),
                       height: 300,
                       child: _coinOHLCList.isEmpty
                           ? Center(child: Text('No data available'))
@@ -223,9 +224,24 @@ class _DetailsState extends State<Details> {
                           minY: _coinOHLCList.map((ohlc) => ohlc.low).reduce((a, b) => a < b ? a : b),
                           maxY: _coinOHLCList.map((ohlc) => ohlc.high).reduce((a, b) => a > b ? a : b),
                           titlesData: FlTitlesData(
-                            leftTitles: SideTitles(showTitles: true),
-                            bottomTitles: SideTitles(showTitles: true),
+                            leftTitles: SideTitles(
+                              showTitles: true,
+                              getTextStyles: (value) => TextStyle(
+                                color: Colors.black,
+                                fontWeight: FontWeight.bold,
+                                fontSize: 7,
+                              ),
+                            ),
+                            bottomTitles: SideTitles(
+                                showTitles: true,
+                                getTextStyles: (value) => TextStyle(
+                                  color: Colors.black,
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 7,
+                              ),
+                            ),
                           ),
+
                         ),
                       ),
                     ),
@@ -233,7 +249,7 @@ class _DetailsState extends State<Details> {
                 ),
               ),
               Container(
-                height: 350,
+                height: 450,
                 decoration: BoxDecoration(
                   color: Colors.white,
                   borderRadius: BorderRadius.only(
@@ -268,7 +284,7 @@ class _DetailsState extends State<Details> {
                                     style: TextStyle(color: Colors.black87),
                                   ),
                                   Text(
-                                    current_price ?? '',
+                                    '\$' + (current_price ?? ''),
                                     style: TextStyle(color: Colors.black54),
                                   ),
                                   SizedBox(
@@ -300,7 +316,7 @@ class _DetailsState extends State<Details> {
                                     style: TextStyle(color: Colors.black87),
                                   ),
                                   Text(
-                                    '${widget.buyingPower}',
+                                    '\$${widget.buyingPower}',
                                     style: TextStyle(color: Colors.black54),
                                   ),
 
@@ -366,7 +382,7 @@ class _DetailsState extends State<Details> {
                                     style: TextStyle(color: Colors.black87),
                                   ),
                                   Text(
-                                    current_price ?? '',
+                                    '\$' + (current_price ?? ''),
                                     style: TextStyle(color: Colors.black54),
                                   ),
                                   SizedBox(
@@ -390,16 +406,16 @@ class _DetailsState extends State<Details> {
                                       return null;
                                     },
                                   ),
-                                  Row(
-                                    children: [
-                                      Text('Max:', style: TextStyle(color: Colors.black87)),
-                                      SizedBox(width: 10), // Adjust the width as needed
-                                      Text('3.00', style: TextStyle(color: Colors.black54)),
-                                      SizedBox(width: 20), // Adjust the width as needed
-                                      Text('Buying Power:', style: TextStyle(color: Colors.black87)),
-                                      SizedBox(width: 10), // Adjust the width as needed
-                                      Text('${widget.buyingPower}', style: TextStyle(color: Colors.black54)),
-                                    ],
+                                  SizedBox(
+                                    height: 20,
+                                  ),
+                                  Text(
+                                      'Max:',
+                                    style: TextStyle(color: Colors.black87),
+                                  ),
+                                  Text(
+                                      '3.00',
+                                    style: TextStyle(color: Colors.black54),
                                   ),
 
                                   SizedBox(
