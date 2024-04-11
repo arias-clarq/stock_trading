@@ -7,7 +7,6 @@ import 'package:intl/intl.dart  ';
 void main() {
   runApp(MaterialApp(
     debugShowCheckedModeBanner: false,
-    home: MyApp(),
     theme: ThemeData(
       textTheme: TextTheme(
         bodyText1: TextStyle(color: Colors.white),
@@ -22,18 +21,29 @@ void main() {
 }
 
 class MyApp extends StatefulWidget {
+  late final accountBalance;
+  MyApp({ required this.accountBalance});
+
   @override
   _MyAppState createState() => _MyAppState();
 }
 
 class _MyAppState extends State<MyApp>  {
-
-  double accountBalance = 10000.0; // Example account balance
+  late double accountBalance;
   double margin = 2.0; // Example margin factor (e.g., 2x leverage)
   double marginRequirement = 0.5; // Example margin requirement (e.g., 50%)
   late double buyingPower; // Declare buyingPower as a late variable
   late String buyingPowerString;
   late String accountBalanceString;
+
+  void updateBalance(double newBalance) {
+    setState(() {
+      buyingPower = newBalance * margin * (1.0 - marginRequirement);
+      buyingPowerString = formatDoubleWithCommas(buyingPower);
+      accountBalance = newBalance;
+      accountBalanceString = formatDoubleWithCommas(accountBalance);
+    });
+  }
 
   String formatDoubleWithCommas(double value) {
     final formatter = NumberFormat('#,##0.00', 'en_US');
@@ -43,7 +53,9 @@ class _MyAppState extends State<MyApp>  {
   @override
   void initState() {
     super.initState();
-    // Calculate buying power in initState
+    // Set account balance based on whether widget.accountBalance is provided or not
+    accountBalance = widget.accountBalance != null ? 10000.0 - widget.accountBalance : 0;
+    // Calculate buying power
     buyingPower = accountBalance * margin * (1.0 - marginRequirement);
     buyingPowerString = formatDoubleWithCommas(buyingPower);
     accountBalanceString = formatDoubleWithCommas(accountBalance);
@@ -114,7 +126,7 @@ class _MyAppState extends State<MyApp>  {
                                 Navigator.push(
                                   context,
                                   MaterialPageRoute(
-                                      builder: (context) => Search(buyingPower: buyingPower,)),
+                                      builder: (context) => Search(buyingPower: buyingPower, accountBalance: accountBalance,)),
                                 );
                               },
                               child: Container(
@@ -224,7 +236,7 @@ class _MyAppState extends State<MyApp>  {
                                           Navigator.push(
                                             context,
                                             MaterialPageRoute(
-                                                builder: (context) => Search(buyingPower: buyingPower,)),
+                                                builder: (context) => Search(buyingPower: buyingPower, accountBalance: accountBalance,)),
                                           );
                                         },
                                         child: Container(
