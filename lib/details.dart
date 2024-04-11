@@ -216,15 +216,25 @@ class _DetailsState extends State<Details> {
                                 return FlSpot(_coinOHLCList.indexOf(ohlc).toDouble(), ohlc.close);
                               }).toList(),
                               isCurved: true,
+                              curveSmoothness: 0.40,
                               colors: [Colors.blue],
                               barWidth: 2,
                               isStrokeCapRound: true,
-                              belowBarData: BarAreaData(show: false),
+                              dotData: FlDotData(show: false), // Remove dots
+                              belowBarData: BarAreaData(
+                                show: true,
+                                gradientFrom: Offset(0, 0),
+                                gradientTo: Offset(0, 2),
+                                colors: [Colors.blue.withOpacity(0.5), Colors.transparent], // Add gradient
+                              ),
+
                             ),
+
                           ],
                           minY: _coinOHLCList.map((ohlc) => ohlc.low).reduce((a, b) => a < b ? a : b),
                           maxY: _coinOHLCList.map((ohlc) => ohlc.high).reduce((a, b) => a > b ? a : b),
                           titlesData: FlTitlesData(
+
                             leftTitles: SideTitles(
                               showTitles: true,
                               getTextStyles: (value) => TextStyle(
@@ -241,9 +251,12 @@ class _DetailsState extends State<Details> {
                                   fontSize: 7,
                               ),
                             ),
+
                           ),
 
                         ),
+                        swapAnimationDuration: Duration(milliseconds: 150),
+                        swapAnimationCurve: Curves.linear,
                       ),
                     ),
                   ],
