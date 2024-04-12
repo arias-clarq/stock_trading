@@ -110,7 +110,7 @@ class _SearchState extends State<Search> {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => Details(coinId: _filteredList[index].coin_id, buyingPower: widget.buyingPower, accountBalance: widget.accountBalance),
+                        builder: (context) => Details(coinId: _filteredList[index].coin_id, buyingPower: widget.buyingPower, accountBalance: widget.accountBalance,),
                       ),
                     );
                   },

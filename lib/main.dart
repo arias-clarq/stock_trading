@@ -8,6 +8,7 @@ import 'package:fl_chart/fl_chart.dart';
 void main() {
   runApp(MaterialApp(
     debugShowCheckedModeBanner: false,
+    home: MyApp(accountBalance: null),
     theme: ThemeData(
       textTheme: TextTheme(
         bodyText1: TextStyle(color: Colors.white),
@@ -32,6 +33,14 @@ class MyApp extends StatefulWidget {
 class _MyAppState extends State<MyApp>  {
   late double accountBalance;
 
+  double updateAccount(){
+    if(widget.accountBalance == null){
+      return accountBalance = 10000.0;
+    }else{
+      return accountBalance -= widget.accountBalance;
+    }
+  }
+
   double margin = 2.0; // Example margin factor (e.g., 2x leverage)
   double marginRequirement = 0.5; // Example margin requirement (e.g., 50%)
   late double buyingPower; // Declare buyingPower as a late variable
@@ -55,9 +64,8 @@ class _MyAppState extends State<MyApp>  {
   @override
   void initState() {
     super.initState();
-    // Set account balance based on whether widget.accountBalance is provided or not
-    accountBalance = widget.accountBalance != null ? 10000.0 - widget.accountBalance : 0;
     // Calculate buying power
+    updateAccount();
     buyingPower = accountBalance * margin * (1.0 - marginRequirement);
     buyingPowerString = formatDoubleWithCommas(buyingPower);
     accountBalanceString = formatDoubleWithCommas(accountBalance);
@@ -267,7 +275,7 @@ class _MyAppState extends State<MyApp>  {
                               child: Row(
                                 children: [
                                   Text('Name'),
-                                   ],
+                                ],
                               ),
                             ), //Stock assets header
                             Container(

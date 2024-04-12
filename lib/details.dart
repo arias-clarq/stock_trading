@@ -1,7 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
-import 'package:stock_trading/main.dart';
 
 import 'model/StockTrading.dart';
 import 'service/StockDataService.dart';
@@ -83,22 +82,6 @@ class _DetailsState extends State<Details> {
     }
   }
 
-  int getMaxSellQuantity(String coinId) {
-    // Assuming _stockData contains the parsed JSON data
-    double? totalSupply = _stockData?.total_supply;
-
-    // Check if totalSupply is null or not
-    if (totalSupply != null) {
-      // Convert total supply to integer
-      int totalSupplyInt = totalSupply.toInt();
-      // Return the total supply as the maximum quantity that can be sold
-      return totalSupplyInt;
-    } else {
-      // If totalSupply is null, return 0 as a fallback value
-      return 0;
-    }
-  }
-
   final TextEditingController quantityBuy = TextEditingController();
   final TextEditingController quantitySell = TextEditingController();
   // Add your logic to buy coins
@@ -113,9 +96,12 @@ class _DetailsState extends State<Details> {
 
       // Subtract the total cost from buying power
       setState(() {
-        widget.accountBalance -= totalCost;
         widget.buyingPower -= totalCost;
-        Navigator.push(context, MaterialPageRoute(builder: (context) => MyApp(accountBalance: widget.accountBalance)));
+        widget.accountBalance -= totalCost;
+        // Update user portfolio (e.g., adding the purchased coins)
+        // This can be done using a portfolio service or updating the state
+        // Example:
+        // updateUserPortfolio(coinId, quantity, price);
       });
 
       // Display a success message
@@ -153,6 +139,22 @@ class _DetailsState extends State<Details> {
     ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Successfully sold $quantity $coinId.'))
     );
+  }
+
+  int getMaxSellQuantity(String coinId) {
+    // Assuming _stockData contains the parsed JSON data
+    double? totalSupply = _stockData?.total_supply;
+
+    // Check if totalSupply is null or not
+    if (totalSupply != null) {
+      // Convert total supply to integer
+      int totalSupplyInt = totalSupply.toInt();
+      // Return the total supply as the maximum quantity that can be sold
+      return totalSupplyInt;
+    } else {
+      // If totalSupply is null, return 0 as a fallback value
+      return 0;
+    }
   }
 
 
@@ -261,11 +263,11 @@ class _DetailsState extends State<Details> {
                               ),
                             ),
                             bottomTitles: SideTitles(
-                                showTitles: true,
-                                getTextStyles: (value) => TextStyle(
-                                  color: Colors.black,
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 7,
+                              showTitles: true,
+                              getTextStyles: (value) => TextStyle(
+                                color: Colors.black,
+                                fontWeight: FontWeight.bold,
+                                fontSize: 7,
                               ),
                             ),
 
@@ -472,11 +474,11 @@ class _DetailsState extends State<Details> {
                                     height: 20,
                                   ),
                                   Text(
-                                      'Max:',
+                                    'Max:',
                                     style: TextStyle(color: Colors.black87),
                                   ),
                                   Text(
-                                      '${getMaxSellQuantity(widget.coinId)}',
+                                    '${getMaxSellQuantity(widget.coinId)}',
                                     style: TextStyle(color: Colors.black54),
                                   ),
 
