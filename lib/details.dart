@@ -27,10 +27,12 @@ void main() {
 class Details extends StatefulWidget {
   final String coinId;
   double buyingPower;
+  double accountBalance;
 
   Details({
     required this.coinId,
-    required this.buyingPower
+    required this.buyingPower,
+    required this.accountBalance
   });
 
   @override
@@ -88,13 +90,14 @@ class _DetailsState extends State<Details> {
     double totalCost = price * quantity;
 
     // Check if the buying power is sufficient
-    if (widget.buyingPower >= totalCost) {
+    if (widget.accountBalance >= totalCost) {
       // Perform the purchase
       print('Buying $quantity coins of $coinId at $price per coin');
 
       // Subtract the total cost from buying power
       setState(() {
         widget.buyingPower -= totalCost;
+        widget.accountBalance -= totalCost;
         // Update user portfolio (e.g., adding the purchased coins)
         // This can be done using a portfolio service or updating the state
         // Example:
@@ -136,6 +139,22 @@ class _DetailsState extends State<Details> {
     ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Successfully sold $quantity $coinId.'))
     );
+  }
+
+  int getMaxSellQuantity(String coinId) {
+    // Assuming _stockData contains the parsed JSON data
+    double? totalSupply = _stockData?.total_supply;
+
+    // Check if totalSupply is null or not
+    if (totalSupply != null) {
+      // Convert total supply to integer
+      int totalSupplyInt = totalSupply.toInt();
+      // Return the total supply as the maximum quantity that can be sold
+      return totalSupplyInt;
+    } else {
+      // If totalSupply is null, return 0 as a fallback value
+      return 0;
+    }
   }
 
 
@@ -244,11 +263,11 @@ class _DetailsState extends State<Details> {
                               ),
                             ),
                             bottomTitles: SideTitles(
-                                showTitles: true,
-                                getTextStyles: (value) => TextStyle(
-                                  color: Colors.black,
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 7,
+                              showTitles: true,
+                              getTextStyles: (value) => TextStyle(
+                                color: Colors.black,
+                                fontWeight: FontWeight.bold,
+                                fontSize: 7,
                               ),
                             ),
 
@@ -455,11 +474,11 @@ class _DetailsState extends State<Details> {
                                     height: 20,
                                   ),
                                   Text(
-                                      'Max:',
+                                    'Max:',
                                     style: TextStyle(color: Colors.black87),
                                   ),
                                   Text(
-                                      '3.00',
+                                    '${getMaxSellQuantity(widget.coinId)}',
                                     style: TextStyle(color: Colors.black54),
                                   ),
 

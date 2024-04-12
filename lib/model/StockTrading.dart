@@ -10,6 +10,7 @@ class CoinData{
   final int? total_volume;
   final double? high_24;
   final double? low_24;
+  final double? total_supply;
   //add more field here if desired
 
   CoinData({
@@ -20,7 +21,8 @@ class CoinData{
     required this.currentPrice,
     required this.total_volume,
     required this.high_24,
-    required this.low_24
+    required this.low_24,
+    required this.total_supply
   });
 
   factory CoinData.fromJson(data){
@@ -32,7 +34,8 @@ class CoinData{
         currentPrice: data[0]['current_price'],
         total_volume: data[0]['total_volume'],
         high_24: data[0]['high_24'],
-        low_24: data[0]['low_24']
+        low_24: data[0]['low_24'],
+        total_supply: data[0]['total_supply']
     );
   }
 }
