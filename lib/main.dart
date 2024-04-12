@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:stock_trading/search.dart';
 import 'package:intl/intl.dart  ';
-import 'package:fl_chart/fl_chart.dart';
 
 void main() {
   runApp(MaterialApp(
@@ -33,12 +32,10 @@ class MyApp extends StatefulWidget {
 class _MyAppState extends State<MyApp>  {
   late double accountBalance;
 
-  double updateAccount(){
-    if(widget.accountBalance == null){
-      return accountBalance = 10000.0;
-    }else{
-      return accountBalance -= widget.accountBalance;
-    }
+  void updateAccount(){
+    setState(() {
+      accountBalance = 10000.0;
+    });
   }
 
   double margin = 2.0; // Example margin factor (e.g., 2x leverage)
@@ -46,15 +43,6 @@ class _MyAppState extends State<MyApp>  {
   late double buyingPower; // Declare buyingPower as a late variable
   late String buyingPowerString;
   late String accountBalanceString;
-
-  void updateBalance(double newBalance) {
-    setState(() {
-      buyingPower = newBalance * margin * (1.0 - marginRequirement);
-      buyingPowerString = formatDoubleWithCommas(buyingPower);
-      accountBalance = newBalance;
-      accountBalanceString = formatDoubleWithCommas(accountBalance);
-    });
-  }
 
   String formatDoubleWithCommas(double value) {
     final formatter = NumberFormat('#,##0.00', 'en_US');

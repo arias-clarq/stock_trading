@@ -7,6 +7,7 @@ import 'service/StockDataService.dart';
 import 'package:intl/intl.dart  ';
 import 'package:fl_chart/fl_chart.dart';
 import 'dart:ui';
+import 'account.dart';
 
 void main() {
   runApp(MaterialApp(
@@ -98,10 +99,6 @@ class _DetailsState extends State<Details> {
       setState(() {
         widget.buyingPower -= totalCost;
         widget.accountBalance -= totalCost;
-        // Update user portfolio (e.g., adding the purchased coins)
-        // This can be done using a portfolio service or updating the state
-        // Example:
-        // updateUserPortfolio(coinId, quantity, price);
       });
 
       // Display a success message
