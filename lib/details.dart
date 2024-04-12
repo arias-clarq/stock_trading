@@ -7,7 +7,6 @@ import 'service/StockDataService.dart';
 import 'package:intl/intl.dart  ';
 import 'package:fl_chart/fl_chart.dart';
 import 'dart:ui';
-import 'account.dart';
 
 void main() {
   runApp(MaterialApp(
